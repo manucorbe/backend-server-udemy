@@ -11,6 +11,14 @@ var bodyParser = require('body-parser');
 // INICIALIZAR VARIABLES
 var app = express();
 
+//CORS
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+    next();
+});
+
 
 //BODY PARSER
 // parse application/x-www-form-urlencoded parse application/json
@@ -27,6 +35,7 @@ var facturaRoutes = require('./routes/factura');
 var clienteRoutes = require('./routes/cliente');
 var busquedaRoutes = require('./routes/busqueda');
 var uploadRoutes = require('./routes/upload');
+var imagenesRoutes = require('./routes/imagenes');
 
 
 
@@ -38,9 +47,14 @@ mongoose.connection.openUri('mongodb://localhost:27017/corberaDB', (err, res) =>
 
 
 
+
+//SERVER INDEX CONFIG
+var serveIndex = require('serve-index');
+app.use(express.static(__dirname + '/'));
+app.use('/uploads', serveIndex(__dirname + '/uploads'));
+
 // RUTAS
 app.use('/', appRoutes);
-
 
 app.use('/usuario', usuarioRoutes);
 app.use('/login', loginRoutes);
@@ -48,6 +62,7 @@ app.use('/factura', facturaRoutes);
 app.use('/cliente', clienteRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/img', imagenesRoutes);
 
 
 
