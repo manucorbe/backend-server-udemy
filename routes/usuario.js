@@ -7,7 +7,7 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 
 //OBTENER TODOS LOS USUARIOS
 app.get('/', (req, res, next) => {
-    Usuario.find({}, 'nombre email img role')
+    Usuario.find({}, )
         .exec(
             (err, usuarios) => {
                 if (err) {
