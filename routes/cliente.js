@@ -7,7 +7,11 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 
 //OBTENER TODOS LOS CLIENTES
 app.get('/', (req, res, next) => {
-    Cliente.find({}, 'nombre img tlf')
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+    Cliente.find({})
+        .skip(desde)
+        .limit(5)
         .exec(
             (err, clientes) => {
                 if (err) {
@@ -17,21 +21,58 @@ app.get('/', (req, res, next) => {
                         errors: err
                     });
                 }
-                res.status(200).json({
-                    ok: true,
-                    clientes: clientes
+                Cliente.count({}, (err, conteo) => {
+                    if (err) {
+                        return res.status(500).json({
+                            ok: false,
+                            mensaje: 'Error contando clientes',
+                            errors: err
+                        });
+                    }
+                    res.status(200).json({
+                        ok: true,
+                        clientes: clientes,
+                        total: conteo
+                    });
                 });
             });
 });
 
+//OBTENER UN CLIENTE POR ID
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Cliente.findById(id, (err, cliente) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar cliente por ID',
+                errors: err
+            });
+        }
+        if (!cliente) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'El cliente con el id ' + id + ' no existe',
+                errors: { message: 'No existe un cliente con ese ID' }
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            cliente: cliente
+        });
+    });
+});
 
 //CREAR UN NUEVO CLIENTE
 app.post('/', (req, res) => {
     var body = req.body;
     var cliente = new Cliente({
         nombre: body.nombre,
-        img: body.img,
-        tlf: body.tlf
+        nif: body.nif,
+        email: body.email,
+        tlf: body.tlf,
+        direccion: body.direccion,
+        img: body.img
     });
     cliente.save((err, clienteGuardada) => {
         if (err) {
@@ -68,8 +109,11 @@ app.put('/:id', (req, res) => {
             });
         }
         cliente.nombre = body.nombre;
-        cliente.img = body.img;
+        cliente.nif = body.nif;
+        cliente.email = body.email;
         cliente.tlf = body.tlf;
+        cliente.direccion = body.direccion;
+        cliente.img = body.img;
 
         cliente.save((err, clienteGuardado) => {
             if (err) {

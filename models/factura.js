@@ -7,11 +7,15 @@ var Schema = mongoose.Schema;
 var facturaSchema = new Schema({
 
     nombre: { type: String, required: [true, 'El nombre es necesario'] },
+    fecha: { type: Date, required: [true, 'La fecha es necesaria'] },
+    numero: { type: Number, required: [true, 'El número es necesario'] },
+    producto: { type: String, required: [true, 'El producto es necesario'] },
+    cantidad: { type: Number, required: [true, 'La cantidad es necesario'] },
     img: { type: String, required: false },
     cliente: {
         type: Schema.Types.ObjectId,
         ref: 'Cliente',
-        required: [true, 'El id del cliente es un campo obligatorio']
+        required: [false]
     }
 }, { collection: 'facturas' });
 

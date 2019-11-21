@@ -9,11 +9,9 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 app.get('/', (req, res, next) => {
     var desde = req.query.desde || 0;
     desde = Number(desde);
-
-    Factura.find({}, 'nombre img cliente')
+    Factura.find({})
         .skip(desde)
         .limit(5)
-        .populate('cliente', 'nombre tlf')
         .exec(
             (err, facturas) => {
                 if (err) {
@@ -39,13 +37,40 @@ app.get('/', (req, res, next) => {
                 });
             });
 });
-
+//OBTENER UNA FACTURA POR ID
+app.get('/:id', (req, res) => {
+    var id = req.params.id;
+    Factura.findById(id, (err, factura) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar factura por ID',
+                errors: err
+            });
+        }
+        if (!factura) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'El factura con el id ' + id + ' no existe',
+                errors: { message: 'No existe un factura con ese ID' }
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            factura: factura
+        });
+    });
+});
 
 //CREAR UNA NUEVA FACTURA
 app.post('/', (req, res) => {
     var body = req.body;
     var factura = new Factura({
         nombre: body.nombre,
+        fecha: body.fecha,
+        numero: body.numero,
+        producto: body.producto,
+        cantidad: body.cantidad,
         img: body.img,
         cliente: body.cliente
     });
@@ -84,7 +109,11 @@ app.put('/:id', (req, res) => {
             });
         }
         factura.nombre = body.nombre;
-        factura.img = body.img;
+        factura.fecha = body.fecha,
+            factura.numero = body.numero,
+            factura.producto = body.producto,
+            factura.cantidad = body.cantidad,
+            factura.img = body.img;
         factura.cliente = body.cliente;
 
         factura.save((err, facturaGuardado) => {
