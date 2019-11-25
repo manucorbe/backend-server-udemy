@@ -11,12 +11,12 @@ var facturaSchema = new Schema({
     numero: { type: Number, required: [true, 'El número es necesario'] },
     producto: { type: String, required: [true, 'El producto es necesario'] },
     cantidad: { type: Number, required: [true, 'La cantidad es necesario'] },
-    img: { type: String, required: false },
     cliente: {
         type: Schema.Types.ObjectId,
         ref: 'Cliente',
         required: [false]
-    }
+    },
+    img: { type: String, required: false }
 }, { collection: 'facturas' });
 
 

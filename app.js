@@ -36,6 +36,7 @@ var clienteRoutes = require('./routes/cliente');
 var busquedaRoutes = require('./routes/busqueda');
 var uploadRoutes = require('./routes/upload');
 var imagenesRoutes = require('./routes/imagenes');
+var comentarioRoutes = require('./routes/comentario');
 
 
 
@@ -63,6 +64,7 @@ app.use('/cliente', clienteRoutes);
 app.use('/busqueda', busquedaRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/img', imagenesRoutes);
+app.use('/comentario', comentarioRoutes);
 
 
 
